@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import websocket from "@fastify/websocket";
+import cors from "@fastify/cors"
 
 import { authRoute } from "./routes/routes.js";
 import {
@@ -14,6 +15,10 @@ const PORT = 8000;
 const app = fastify({
   logger: true,
 });
+
+await app.register(cors, {
+  origin: "*"
+})
 
 await app.register(websocket);
 
