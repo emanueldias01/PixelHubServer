@@ -1,14 +1,41 @@
 import fastify from "fastify";
-import { authRoute } from "./routes/routes.js";
+import websocket from "@fastify/websocket";
 
-const PORT = 8000
+import { authRoute } from "./routes/routes.js";
+import {
+  addClient,
+  removeClient,
+} from "./websockets/connections.js";
+
+const PORT = 8000;
 
 const app = fastify({
-    logger: true
-})
+  logger: true,
+});
 
-app.register(authRoute)
+await app.register(websocket);
 
-app.listen({
-    port:PORT
-})
+app.register(authRoute);
+
+app.get(
+  "/ws",
+  { websocket: true },
+  (socket) => {
+
+    addClient(socket);
+
+    console.log("Client connected");
+
+    socket.on("close", () => {
+      removeClient(socket);
+
+      console.log("Client disconnected");
+    });
+
+  }
+);
+
+await app.listen({
+  port: PORT,
+  host: "0.0.0.0",
+});
