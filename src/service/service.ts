@@ -29,4 +29,3 @@ export async function logout(user: User) {
         throw new Error("This user is not found")
     }
 }
-

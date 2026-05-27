@@ -4,11 +4,15 @@ import cors from "@fastify/cors"
 
 import { authRoute } from "./routes/routes.js";
 import {
+  unicast,
   broadcast,
   addClient,
   removeClient,
 } from "./websockets/connections.js";
 
+import { BoardEntity } from "./entitys/BoardEntity.js";
+
+const boardEntity = new BoardEntity(1000, 1000, "#FFFFFF")
 
 const PORT = 8000;
 
@@ -29,14 +33,20 @@ app.get(
   { websocket: true },
   (socket) => {
     addClient(socket);
-    console.log("Client connected");
+    unicast(boardEntity.raw(), socket)
 
     socket.on("message", (message) => {
       try {
         const data = JSON.parse(message.toString());
 
         if (data.type === "draw") {
+          boardEntity.setPixel(data.start, data.color, data.username)
           broadcast(data, socket);
+        }
+
+        if (data.type === "bucket") {
+          boardEntity.applyBucket(data)
+          broadcast(boardEntity.raw())
         }
       } catch (error) {
         console.error("Erro ao fazer parse da mensagem:", error);

@@ -1,1 +1,5 @@
 # PixelHubServer
+
+```
+npm run dev
+```

@@ -10,6 +10,10 @@ export function removeClient(client: WebSocket) {
   clients.delete(client);
 }
 
+export function unicast(data: unknown, sender: WebSocket) {
+  sender.send(JSON.stringify(data));
+}
+
 export function broadcast(data: unknown, sender?: WebSocket) {
   const message = JSON.stringify(data);
 
