@@ -33,7 +33,8 @@ app.get(
   { websocket: true },
   (socket) => {
     addClient(socket);
-    unicast(boardEntity.raw(), socket)
+    console.log("Client connected");
+    unicast(boardEntity.raw(), socket);
 
     socket.on("message", (message) => {
       try {
